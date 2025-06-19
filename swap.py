@@ -20,12 +20,12 @@ while True:
     key = cv2.waitKey(1)
 
     if key == ord('1') and bboxs:
-        x, y, w, h = bboxs[0]['bbox']
+        x, y, w, h = map(int, bboxs[0]['bbox'])
         face1 = img[y:y+h, x:x+w].copy()
         print("Captured face 1")
 
     if key == ord('2') and bboxs:
-        x, y, w, h = bboxs[0]['bbox']
+        x, y, w, h = map(int, bboxs[0]['bbox'])
         face2 = img[y:y+h, x:x+w].copy()
         print("Captured face 2")
 
@@ -33,10 +33,13 @@ while True:
         img, bboxs = detector.findFaces(img)
         if len(bboxs) >= 2:
             for i, face in enumerate([face2, face1]):
-                x, y, w, h = bboxs[i]['bbox']
+                x, y, w, h = map(int, bboxs[i]['bbox'])
                 face_resized = cv2.resize(face, (w, h))
-                img[y:y+h, x:x+w] = face_resized
+                if y + h <= img.shape[0] and x + w <= img.shape[1]:
+                    img[y:y+h, x:x+w] = face_resized
             print("Faces swapped")
+        else:
+            print("Make sure both faces are visible to swap")
 
     if key == ord('q'):
         break
